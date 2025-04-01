@@ -1,43 +1,60 @@
-//go:build !webapp
-// +build !webapp
+//go:build !apiserver
+// +build !apiserver
 
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
+//go:embed ui/build/*
+var staticFiles embed.FS
+
 type spaHandler struct {
+	staticFS   embed.FS
 	staticPath string
 	indexPath  string
 }
 
-// no longer used, will be helpful in Zasperhub in future when running api only server
 func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Join internally call path.Clean to prevent directory traversal
 	path := filepath.Join(h.staticPath, r.URL.Path)
-
-	// check whether a file exists or is a directory at the given path
-	fi, err := os.Stat(path)
-	if os.IsNotExist(err) || fi.IsDir() {
-		// file does not exist or path is a directory, serve index.html
-		http.ServeFile(w, r, filepath.Join(h.staticPath, h.indexPath))
+	path = strings.ReplaceAll(path, "\\", "/")
+	_, err := h.staticFS.Open(path)
+	if os.IsNotExist(err) {
+		// file does not exist, serve index.html
+		index, err := h.staticFS.ReadFile(filepath.Join(h.staticPath, h.indexPath))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusAccepted)
+		w.Write(index)
 		return
-	}
-
-	if err != nil {
+	} else if err != nil {
 		// if we got an error (that wasn't that the file doesn't exist) stating the
 		// file, return a 500 internal server error and stop
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// otherwise, use http.FileServer to serve the static file
-	http.FileServer(http.Dir(h.staticPath)).ServeHTTP(w, r)
+	// get the subdirectory of the static dir
+	statics, err := fs.Sub(h.staticFS, h.staticPath)
+	// otherwise, use http.FileServer to serve the static dir
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.FileServer(http.FS(statics)).ServeHTTP(w, r)
 }
 
 func getSpaHandler() http.Handler {
-	return spaHandler{staticPath: "./ui/build", indexPath: "index.html"}
+	return spaHandler{staticFS: staticFiles, staticPath: "ui/build", indexPath: "index.html"}
 }

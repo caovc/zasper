@@ -1,0 +1,59 @@
+project_name: zasper
+
+version: 2
+
+env:
+  - POSTHOG_API_KEY={{ .Env.POSTHOG_API_KEY }}
+  - VERSION_BUILD_FLAG={{ .Env.VERSION_BUILD_FLAG }}
+
+before:
+  hooks:
+    - go mod tidy
+    - npm --prefix ./ui i
+    - env CI=false npm --prefix ./ui run build
+
+builds:
+  - id: zasper
+    env:
+      - CGO_ENABLED=0
+    main: .
+    ldflags:
+      - -s -w -X main.build={{.Env.VERSION_BUILD_FLAG}}
+    targets:
+      - darwin_amd64
+      - darwin_arm64
+      - linux_386
+      - linux_amd64
+      - linux_arm64
+      - windows_386
+      - windows_amd64
+      - windows_arm64
+      - android_arm64
+
+notarize:
+  macos:
+    - enabled: '{{ isEnvSet "MACOS_SIGN_P12" }}'
+      sign:
+        certificate: "{{.Env.MACOS_SIGN_P12}}"
+        password: "{{.Env.MACOS_SIGN_PASSWORD}}"
+        entitlements: ./resources/entitlements.mac.plist
+      notarize:
+        issuer_id: "{{.Env.MACOS_NOTARY_ISSUER_ID}}"
+        key_id: "{{.Env.MACOS_NOTARY_KEY_ID}}"
+        key: "{{.Env.MACOS_NOTARY_KEY}}"
+        wait: true
+        timeout: 20m
+
+archives:
+  - id: archive
+    builds:
+     - zasper
+    files:
+      - LICENSE
+    name_template: >-
+      {{ .ProjectName }}-{{- .Os }}-{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+        

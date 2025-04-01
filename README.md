@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./logo.svg" alt="Zasper">
+  <img src="./assets/logo.svg" alt="Zasper">
 </p>
 <p align="center">
     ⚡ High Performance IDE 🚀 Massive concurrency 🐥  Inspired by Jupyter
@@ -18,8 +18,8 @@
   <a href="https://github.com/zasper-io/zasper/actions/workflows/gobuild.yml" target="_blank"><img alt="Github CD status" src="https://github.com/zasper-io/zasper/actions/workflows/gobuild.yml/badge.svg"></a>
 </p>
 
-<p align=center>
-  <img src="./screenshots/intro.gif"/>
+<p align="center">
+    <a href="https://www.youtube.com/watch?v=LvVOkYL_LzQ" target="_blank"><img src="https://raw.githubusercontent.com/zasper-io/assets/refs/heads/main/play-demo.png" alt="Zasper Demo"></a>
 </p>
 
 
@@ -27,10 +27,12 @@ Zasper is an IDE designed from the ground up to support massive concurrency. It 
 
 It's perfectly suited for running REPL-style data applications, with Jupyter notebooks being one example.
 
-Currently Zasper is fully supported on Mac with limited support on Linux.
+**Currently Zasper is fully supported on MacOS and Linux.** Currently Windows has limited support!
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=zasper-io/zasper)
 
 # Benchmarks - 4X Better
-Zasper uses one fourth of RAM and one fourth of CPU used by Jupterlab. While Jupyterlab uses around 104.8 MB of RAM and 0.8 CPUs, Zasper uses 26.7 MB of RAM and 0.2 CPUs.
+Zasper uses one fourth of RAM and one fourth of CPU used by Jupyterlab. While Jupyterlab uses around 104.8 MB of RAM and 0.8 CPUs, Zasper uses 26.7 MB of RAM and 0.2 CPUs.
 
 
 # Why I built Zasper ?
@@ -44,6 +46,18 @@ Go's Concurrency: Better suited for applications requiring both concurrency and 
 Python's Event Loop: Ideal for I/O-bound applications that need to handle a lot of asynchronous tasks without blocking. However, it struggles with CPU-bound tasks and lacks native parallelism unless additional worker threads are used.
 
 Hence the Go version of Zasper was born!
+
+
+# Jupyter Kernels Supported
+
+* Python Kernels
+* Conda environments
+* R kernels [(iR)](https://github.com/IRkernel/IRkernel)
+* Julia Kernels [(iJulia)](https://julialang.github.io/IJulia.jl/stable/)
+* Ruby kernels [(iRuby)](https://github.com/SciRuby/iruby)
+* Javascript kernels [(Deno)](https://docs.deno.com/runtime/reference/cli/jupyter/)
+* Go Kernels ([GoNb](https://github.com/janpfeifer/gonb))
+* Compatible with all Jupyter kernels
 
 
 ## 📷 Screenshots
@@ -72,110 +86,119 @@ Hence the Go version of Zasper was born!
 ![Dark Notebook mode](https://raw.githubusercontent.com/zasper-io/assets/refs/heads/main/darkNotebook.png) 
 
 ## Architecture
-![architecture](./architecture.svg)
+![architecture](./assets/architecture.svg)
 
 
 ## ⚡️ Quick start
 
 Zasper comes in two flavours:
 
-1. Electron App
-2. Web App
-
-### Electron App
+1. Web App
+2. Desktop App
 
 
-#### Install zeromq
-On debian
-```bash
-sudo apt-get install libzmq3-dev
-```
+#### Initializing 
 
-On mac
-```zsh
-brew install pkg-config
-brew install zeromq
-```
-
-
-Go to project home and start the server
-
-```bash
-go build -tags webapp -o ui/public/zasper
-```
-
-Go to `ui` and run the app in dev mode
+Download `zasper` from Github and initialize the dependencies.
 
 ```
-npm run electron-dev       # dev-mode
-
-npm run electron-package   # prod-mode
+git clone https://github.com/zasper-io/zasper
+cd zasper
+make init
 ```
 
+#### Web App
 
-
-### Webapp
-
-#### Build the frontend
-
-```bash
-cd ./ui/
-npm run build
+```
+make webapp-install
 ```
 
-#### Install zeromq
-On debian
-```bash
-sudo apt-get install libzmq3-dev
-```
-
-On mac
-```zsh
-brew install pkg-config
-brew install zeromq
-```
-
-#### Start the backend
-
-Install zeromq.
-
-Go to project home and start the server
-
-```bash
-go build -tags webapp
-```
-This will crate a binary called `zasper`. Now add this binary to your path. 
+This will create a binary `zasper` and add it to your go executables directory. Make sure you have go executables on your path. 
 
 Run zasper in any directory to see if the installation was done correctly.
 
 ```
-% zasper -h
-Usage of ../zasper:
+prasunanand@Prasuns-Laptop example % zasper --help
+Usage of zasper:
   -cwd string
     	base directory of project (default ".")
   -debug
     	sets log level to debug
   -port string
-    	port to start the server on (default ":8888")
+    	port to start the server on (default ":8048")
 ```
 
 
 Go to any directory you want to serve and run `zasper`. This starts zasper server in the directory.
+
 ```
-% zasper 
-2024/12/15 20:39:12 Zasper Server started! Listening on port:8888
+prasunanand@Prasuns-Laptop nbformat_go % zasper
 
 ███████╗ █████╗ ███████╗██████╗ ███████╗██████╗ 
 ╚══███╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██╔══██╗
   ███╔╝ ███████║███████╗██████╔╝█████╗  ██████╔╝
  ███╔╝  ██╔══██║╚════██║██╔═══╝ ██╔══╝  ██╔══██╗
 ███████╗██║  ██║███████║██║     ███████╗██║  ██║
-╚══════╝╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
+╚══════╝╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝                  
+	
+2025/02/21 10:19:44 Zasper Server started! Listening on port :8048
+2025/02/21 10:19:44 Visit Zasper webapp on http://localhost:8048
 
 ```
 
-Go to `http://localhost:8888`
+Go to `http://localhost:8048`
 
+
+
+### Desktop App
+
+```
+make electron-package-mac # on macOS
+```
+
+```
+make electron-package-linux # on Linux
+```
+
+This creates  `zasper-0.1.0-arm64.dmg`(macOS) and `zasper_0.1.0_arm64.deb`(Debian) installer.
+
+```
+prasunanand@Prasuns-Laptop zasper % ls -l ui/dist 
+total 626360
+-rw-r--r--   1 prasunanand  staff       1713 Feb 21 10:31 builder-debug.yml
+-rw-r--r--   1 prasunanand  staff        353 Feb 21 10:29 builder-effective-config.yaml
+drwxr-xr-x  21 prasunanand  staff        672 Feb 21 10:30 linux-arm64-unpacked
+drwxr-xr-x   3 prasunanand  staff         96 Feb 21 10:29 mac-arm64
+-rw-r--r--@  1 prasunanand  staff  196642562 Feb 21 10:30 zasper-0.1.0-arm64.dmg
+-rw-r--r--   1 prasunanand  staff     204747 Feb 21 10:30 zasper-0.1.0-arm64.dmg.blockmap
+-rw-r--r--   1 prasunanand  staff  119088602 Feb 21 10:31 zasper_0.1.0_arm64.deb
+
+```
+
+Install `zasper-0.1.0-arm64.dmg` to your machine.
+
+## Jupyter kernels
+
+Please ensure you have jupyter kernels installed.
+
+```
+prasunanand@Prasuns-Laptop examples % jupyter kernelspec list
+Available kernels:
+  deno          /Users/prasunanand/Library/Jupyter/kernels/deno
+  firstenv      /Users/prasunanand/Library/Jupyter/kernels/firstenv
+  gonb          /Users/prasunanand/Library/Jupyter/kernels/gonb
+  ir            /Users/prasunanand/Library/Jupyter/kernels/ir
+  julia-1.11    /Users/prasunanand/Library/Jupyter/kernels/julia-1.11
+  ruby3         /Users/prasunanand/Library/Jupyter/kernels/ruby3
+  python3       /Users/prasunanand/Library/Python/3.9/share/jupyter/kernels/python3
+```
+The simplest way to install a Python 3 Jupyter kernel is
+
+```
+pip install jupyter
+```
+
+You can install other kernels as well. Just Google it!
 
 ## Logging
 
@@ -211,15 +234,25 @@ Zasper aspires to be a full fledged IDE and the future development will be along
 * Easier integration with the existing tools.
 * Zasper Hub for Self Hosted deployment in the cloud.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=zasper-io/zasper&type=Date)](https://star-history.com/#zasper-io/zasper&Date)
+
 # 🌐 Community
 
-Join Zasper Community on [Slack](https://zasper.slack.com)
+Join Zasper Community on [Slack](https://join.slack.com/t/zasper/shared_invite/zt-30sx3uo8w-w~sw4Kje1aoUjxY5MZ_Fkg)
 
 <p align=center>
-  <a href="https://zasper.slack.com" target="_blank">
-      <img height=120px src="./screenshots/slack.svg">
+  <a href="https://join.slack.com/t/zasper/shared_invite/zt-30sx3uo8w-w~sw4Kje1aoUjxY5MZ_Fkg" target="_blank">
+      <img height=120px src="./assets/slack.svg">
   </a>
 </p>
+
+# Sponsors
+
+<img height=100px src="./assets/foss-united.png">
+
+<img height=40px src="./assets/zerodha.png">
 
 # Copyright
 

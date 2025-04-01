@@ -1,0 +1,42 @@
+name: Build Electron App on Ubuntu
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.7'
+
+      - name: Install Dependencies
+        run: make init
+
+      - name: Build Frontend and Backend
+        run: make build
+
+      - name: Package Electron app
+        run: make electron-package-linux
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: zasper-0.1.0-arm64.dmg
+          path: ui/dist
+
